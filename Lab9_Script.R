@@ -50,7 +50,7 @@ summary(m_toy)
 # Prediction - Fitted values
 
 predict(m_toy)
-m_toy$fitted.values
+data_toy$y_hat<-m_toy$fitted.values
 
 ggplot(data = data_toy,aes(x=x_in,y=y_fe))+
   geom_point()+
@@ -107,7 +107,7 @@ library(lmtest)
 dwtest(m_toy)
 
 
-#---- 2. Learn to apply a ANOVA test (F-test) ----
+#---- 2. OLS from the Book example ----
 library("foreign")
 
 uza <- data.table(read.spss("datasets/UZA.sav",to.data.frame = TRUE))
@@ -129,7 +129,7 @@ plot(lm1$residuals~lm1$fitted.values)
 
 #---- 3. Estimate a hedonic model ----
 unzip(zipfile = "../05_lab_assignment/datasets/HSD_sample.csv.zip",exdir = "datasets/")
-sales<-fread("09_lab/HSD_sample.csv")
+sales<-fread("datasets/HSD_sample.csv")
 file.remove("datasets/HSD_sample.csv")
 
 names(sales)
