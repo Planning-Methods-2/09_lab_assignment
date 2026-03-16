@@ -17,7 +17,7 @@
  ## 2. Explore the data creating relational plots (scatter plot, box-plot, histograms, etc.). Check the basic assumptions (continuous variables, number of NAs, correlations, etc.)
  ## 3. Estimate a basic OLS model, interpret results, check R-squared, F and T statistics.
  ## 4. Run some diagnostic tests to rule out issues (Heteroskedasticity, autocorrelation, etc)
- ## 5. Change model specification if needed and return to step 3.
+ ## 5. Change model specification if needed and return to step 3..
 
 
 # 1.1 Toy example (OLS model with only 1 independent variable)
@@ -38,7 +38,7 @@ ggplot(data = data_toy,aes(x=x_in,y=y_fe))+
 # regression model
 
 m_toy<-lm(formula = y_fe ~ x_in, data = data_toy)
-
+m_toy
 summary(m_toy)
 
 #results interpretation
@@ -83,14 +83,14 @@ ggplot(data = data_toy,aes(x=x_in,y=y_fe))+
   geom_smooth(method = "lm",se = F)+
   geom_segment(aes(xend=x_in,yend=m_toy$fitted.values),color='red')
 
-
 plot(m_toy)
 
 # Plot 1: Linear relationship between X and Y: an horizontal red line indicates linear relationship
 plot(m_toy,1)
 # Plot 2: Normality of the residuals: points along the diagonal dotted line indicate normal residuals
 plot(m_toy,2)
-# Plot 3: Homoskedasticity assumtion: horizontal red line indicates variance of residuals does not change with predicted values (is homocedastic)
+
+# Plot 3: Homoskedasticity assumption: horizontal red line indicates variance of residuals does not change with predicted values (is homoskedastic)
 plot(m_toy,3)
 
 # Plot 4: Check for influential observations: 
@@ -103,6 +103,7 @@ plot(m_toy,5)
   # leverage: A data point has high leverage, if it has extreme predictor x values. This can be detected by examining the leverage statistic or the hat-value. A value of this statistic above 2(k + 1)/n indicates an observation with high leverage (P. Bruce and Bruce 2017)
 
 # test for autocorrelation
+install.packages("lmtest")
 library(lmtest)
 dwtest(m_toy)
 
@@ -128,16 +129,44 @@ plot(lm1$residuals~lm1$fitted.values)
 
 
 #---- 3. Estimate a hedonic model ----
-unzip(zipfile = "../05_lab_assignment/datasets/HSD_sample.csv.zip",exdir = "datasets/")
+#unzip(zipfile = "../05_lab_assignment/datasets/HSD_sample.csv.zip",exdir = "datasets/")
 sales<-fread("datasets/HSD_sample.csv")
-file.remove("datasets/HSD_sample.csv")
+#file.remove("datasets/HSD_sample.csv")
 
 names(sales)
 
-f1<-formula(price ~ sqftb + age + rooms)
-m1<-lm(f1,data=sales)
-summary(m1)
 
+f1_a<-formula(price ~ sqftl)
+m1_a<-lm(formula = f1_a,data = sales)
+summary(m1_a)
 
+f1_b<-formula(price ~ sqftl+ sqftb)
+f1_c<-formula(price ~ sqftl+ sqftb + age)
+f1_d<-formula(price ~ sqftl+ sqftb + age + rooms)
+f1_e<-formula(price ~ sqftl+ sqftb + age + rooms+ basement)
+f1_f<-formula(price ~ sqftl+ sqftb + age + rooms+ basement + aircond)
+f1_g<-formula(price ~ sqftl+ sqftb + age + rooms+ basement + aircond+fireplace)
+f1_h<-formula(price ~ sqftl+ sqftb + age + rooms+ basement + aircond+fireplace+attic)
+f1_i<-formula(price ~ sqftl+ sqftb + age + rooms+ basement + aircond+fireplace+attic+garage1)
+f1_j<-formula(price ~ sqftl+ sqftb + age + rooms+ basement + aircond+fireplace+attic+garage1+garage2)
+f1<-formula(price ~ sqftl+ sqftb + age + rooms+ basement + aircond+fireplace+attic+garage1+garage2+brick)
 
+m1_b<-lm(formula = f1_b,data=sales)
+m1_c<-lm(formula = f1_c,data=sales)
+m1_d<-lm(formula = f1_d,data=sales)
+m1_e<-lm(formula = f1_e,data=sales)
+m1_f<-lm(formula = f1_f,data=sales)
+m1_g<-lm(formula = f1_g,data=sales)
+m1_h<-lm(formula = f1_h,data=sales)
+m1_i<-lm(formula = f1_i,data=sales)
+m1_j<-lm(formula = f1_j,data=sales)
+m1<-lm(formula = f1,data=sales)
+
+# Results output
+install.packages("stargazer")
+library(stargazer)
+
+stargazer(m1_a,m1_b,m1_c,m1_d,m1_e,m1_f,m1_g,m1_h,m1_i,m1_j,m1,type = "html",out = "Model_table.html")
+
+# 
 
